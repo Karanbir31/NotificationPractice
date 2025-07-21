@@ -50,7 +50,6 @@ class BasicNotification(private val context: Context) {
     }
 
 
-
     private fun buildNotificationChannel() {
         val channel = NotificationChannel(
             notificationChannelId,
@@ -141,11 +140,12 @@ class BasicNotification(private val context: Context) {
             .build()
     }
 
-    private fun buildNotificationWithReply(): Notification{
+    private fun buildNotificationWithReply(): Notification {
         val replyTextKey = "reply_text_key"
 
         val remoteInput = RemoteInput.Builder(replyTextKey).run {
             setLabel("Enter you reply")
+            setAllowFreeFormInput(true)
             build()
         }
 
@@ -160,14 +160,17 @@ class BasicNotification(private val context: Context) {
             context,
             1234,
             replyIntent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
-        val replyAction = NotificationCompat.Action.Builder(
+        val replyAction: NotificationCompat.Action = NotificationCompat.Action.Builder(
             R.drawable.baseline_add_circle_outline_24,
             "Replay",
             replyPendingIntent
-        ).addRemoteInput(remoteInput).build()
+        )
+            .addRemoteInput(remoteInput)
+            .setAllowGeneratedReplies(true)
+            .build()
 
         return NotificationCompat.Builder(context, notificationChannelId)
             .setSmallIcon(R.drawable.baseline_add_reaction_24)
@@ -176,7 +179,6 @@ class BasicNotification(private val context: Context) {
             .addAction(replyAction)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
-            .setTimeoutAfter(5000)
             .build()
     }
 

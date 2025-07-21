@@ -23,8 +23,12 @@ class MyBroadcastReceiver() : BroadcastReceiver() {
 
             "ACTION_REPLY" ->{
 
+                for (key in intent.extras?.keySet().orEmpty()) {
+                    Log.d("BroadcastReceiver", "Extra: $key = ${intent.extras?.get(key)}")
+                }
+
                 val replyTextKey = "reply_text_key"
-                val userReplied = RemoteInput.getResultsFromIntent(intent)?.getString(replyTextKey) ?: "null"
+                val userReplied = RemoteInput.getResultsFromIntent(intent)?.getCharSequence("reply_text_key")
 
                 Log.d("BroadcastReceiver", "onReceive triggered replied text is - $userReplied")
                 Toast.makeText(context, "User replied - $userReplied", Toast.LENGTH_LONG).show()
